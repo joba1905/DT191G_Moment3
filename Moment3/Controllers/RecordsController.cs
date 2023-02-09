@@ -10,33 +10,33 @@ using Moment3.Models;
 
 namespace Moment3.Controllers
 {
-    public class RecordController : Controller
+    public class RecordsController : Controller
     {
-        private readonly RecordContext _context;
+        private readonly CollectionContext _context;
 
-        public RecordController(RecordContext context)
+        public RecordsController(CollectionContext context)
         {
             _context = context;
         }
 
-        // GET: Record
+        // GET: Records
         public async Task<IActionResult> Index()
         {
-              return _context.Record != null ? 
-                          View(await _context.Record.ToListAsync()) :
-                          Problem("Entity set 'RecordContext.Record'  is null.");
+            var collectionContext = _context.Records.Include(a => a.Artist);
+            return View(await collectionContext.ToListAsync());
         }
 
-        // GET: Record/Details/5
+        // GET: Records/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Record == null)
+            if (id == null || _context.Records == null)
             {
                 return NotFound();
             }
 
-            var @record = await _context.Record
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var @record = await _context.Records
+                .Include(a => a.Artist)
+                .FirstOrDefaultAsync(m => m.RecordID == id);
             if (@record == null)
             {
                 return NotFound();
@@ -45,18 +45,19 @@ namespace Moment3.Controllers
             return View(@record);
         }
 
-        // GET: Record/Create
+        // GET: Records/Create
         public IActionResult Create()
         {
+            ViewData["ArtistID"] = new SelectList(_context.Artists, "ArtistID", "ArtistID");
             return View();
         }
 
-        // POST: Record/Create
+        // POST: Records/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Genre,Year")] Record @record)
+        public async Task<IActionResult> Create([Bind("RecordID,Title,Year,ArtistID")] Record @record)
         {
             if (ModelState.IsValid)
             {
@@ -64,33 +65,35 @@ namespace Moment3.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ArtistID"] = new SelectList(_context.Artists, "ArtistID", "ArtistID", @record.ArtistID);
             return View(@record);
         }
 
-        // GET: Record/Edit/5
+        // GET: Records/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Record == null)
+            if (id == null || _context.Records == null)
             {
                 return NotFound();
             }
 
-            var @record = await _context.Record.FindAsync(id);
+            var @record = await _context.Records.FindAsync(id);
             if (@record == null)
             {
                 return NotFound();
             }
+            ViewData["ArtistID"] = new SelectList(_context.Artists, "ArtistID", "ArtistID", @record.ArtistID);
             return View(@record);
         }
 
-        // POST: Record/Edit/5
+        // POST: Records/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Genre,Year")] Record @record)
+        public async Task<IActionResult> Edit(int id, [Bind("RecordID,Title,Year,ArtistID")] Record @record)
         {
-            if (id != @record.Id)
+            if (id != @record.RecordID)
             {
                 return NotFound();
             }
@@ -104,7 +107,7 @@ namespace Moment3.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!RecordExists(@record.Id))
+                    if (!RecordExists(@record.RecordID))
                     {
                         return NotFound();
                     }
@@ -115,19 +118,21 @@ namespace Moment3.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ArtistID"] = new SelectList(_context.Artists, "ArtistID", "ArtistID", @record.ArtistID);
             return View(@record);
         }
 
-        // GET: Record/Delete/5
+        // GET: Records/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Record == null)
+            if (id == null || _context.Records == null)
             {
                 return NotFound();
             }
 
-            var @record = await _context.Record
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var @record = await _context.Records
+                .Include(a => a.Artist)
+                .FirstOrDefaultAsync(m => m.RecordID == id);
             if (@record == null)
             {
                 return NotFound();
@@ -136,19 +141,19 @@ namespace Moment3.Controllers
             return View(@record);
         }
 
-        // POST: Record/Delete/5
+        // POST: Records/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Record == null)
+            if (_context.Records == null)
             {
-                return Problem("Entity set 'RecordContext.Record'  is null.");
+                return Problem("Entity set 'CollectionContext.Records'  is null.");
             }
-            var @record = await _context.Record.FindAsync(id);
+            var @record = await _context.Records.FindAsync(id);
             if (@record != null)
             {
-                _context.Record.Remove(@record);
+                _context.Records.Remove(@record);
             }
             
             await _context.SaveChangesAsync();
@@ -157,7 +162,7 @@ namespace Moment3.Controllers
 
         private bool RecordExists(int id)
         {
-          return (_context.Record?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Records?.Any(e => e.RecordID == id)).GetValueOrDefault();
         }
     }
 }

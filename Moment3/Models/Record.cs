@@ -1,10 +1,14 @@
-﻿namespace Moment3.Models
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+
+namespace Moment3.Models
 {
     public class Record
     {
-        public int Id { get; set; }
+        public int RecordID { get; set; }
         public string? Title { get; set; }
-        public string? Genre { get; set; }
         public string? Year { get; set; }
+        public int ArtistID { get; set; }
+        public Artist? Artist { get; set; }
     }
 }
