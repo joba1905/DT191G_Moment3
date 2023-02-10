@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<Moment3.Models.Record>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "CD Collection";
 }
 
-<h1>Index</h1>
+<h1>CD Collection</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -13,13 +13,13 @@
     <thead>
         <tr>
             <th>
+                @Html.DisplayNameFor(model => model.Artist)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Title)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Year)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Artist)
             </th>
             <th></th>
         </tr>
@@ -28,13 +28,13 @@
 @foreach (var item in Model) {
         <tr>
             <td>
+                @Html.DisplayFor(modelItem => item.Artist.ArtistName)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Title)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Year)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Artist.ArtistID)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.RecordID">Edit</a> |

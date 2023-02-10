@@ -48,7 +48,7 @@ namespace Moment3.Controllers
         // GET: Records/Create
         public IActionResult Create()
         {
-            ViewData["ArtistID"] = new SelectList(_context.Artists, "ArtistID", "ArtistID");
+            ViewData["ArtistID"] = new SelectList(_context.Artists, "ArtistID", "ArtistName");
             return View();
         }
 
@@ -82,7 +82,7 @@ namespace Moment3.Controllers
             {
                 return NotFound();
             }
-            ViewData["ArtistID"] = new SelectList(_context.Artists, "ArtistID", "ArtistID", @record.ArtistID);
+            ViewData["ArtistID"] = new SelectList(_context.Artists, "ArtistID", "ArtistName", @record.ArtistID);
             return View(@record);
         }
 
